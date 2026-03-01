@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atmospheric Equilibrium Visualizer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Space+Grotesk:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">Toroidal dynamic system sandbox</p>
+        <h1>Atmospheric Equilibrium Visualizer</h1>
+        <p>
+          Set initial conditions, inject a disturbance from any edge or corner,
+          and watch pressure, humidity, and temperature flow through a closed
+          looping field in search of equilibrium.
+        </p>
+      </section>
+
+      <section class="layout">
+        <aside class="controls card panel-controls">
+          <div class="control-section">
+            <h2>Injection</h2>
+            <div class="control-grid">
+              <label class="control">
+                <span>Pressure Shift (hPa)</span>
+                <input id="pressureInput" type="range" min="-20" max="20" value="0" step="1" />
+                <output id="pressureValue">0</output>
+              </label>
+              <label class="control">
+                <span>Humidity Shift (%RH)</span>
+                <input id="humidityInput" type="range" min="-30" max="30" value="0" step="1" />
+                <output id="humidityValue">0</output>
+              </label>
+              <label class="control">
+                <span>Temperature Shift (°C)</span>
+                <input id="temperatureInput" type="range" min="-14" max="14" value="0" step="1" />
+                <output id="temperatureValue">0</output>
+              </label>
+              <label class="control">
+                <span>Injection Origin</span>
+                <select id="originInput">
+                  <option value="northwest">North-West Corner</option>
+                  <option value="northeast">North-East Corner</option>
+                  <option value="southwest">South-West Corner</option>
+                  <option value="southeast">South-East Corner</option>
+                  <option value="north">North Edge</option>
+                  <option value="south">South Edge</option>
+                  <option value="west">West Edge</option>
+                  <option value="east">East Edge</option>
+                  <option value="center">Center</option>
+                </select>
+              </label>
+              <label class="control">
+                <span>Injection Radius</span>
+                <input id="radiusInput" type="range" min="1" max="12" value="4" step="1" />
+                <output id="radiusValue">4</output>
+              </label>
+            </div>
+
+            <div class="buttons buttons-single">
+              <button id="injectBtn" type="button">Inject Disturbance</button>
+            </div>
+          </div>
+
+          <div class="control-section">
+            <h2>Initial Conditions</h2>
+            <div class="control-grid">
+              <label class="control">
+                <span>Pressure Baseline (hPa)</span>
+                <input id="initialPressureInput" type="range" min="870" max="1085" value="1013.25" step="0.25" />
+                <output id="initialPressureValue">1013.25</output>
+              </label>
+              <label class="control">
+                <span>Humidity Baseline (%RH)</span>
+                <input id="initialHumidityInput" type="range" min="0" max="100" value="60" step="1" />
+                <output id="initialHumidityValue">60</output>
+              </label>
+              <label class="control">
+                <span>Temperature Baseline (°C)</span>
+                <input id="initialTemperatureInput" type="range" min="-50" max="50" value="15" step="0.5" />
+                <output id="initialTemperatureValue">15.0</output>
+              </label>
+            </div>
+
+            <div class="toggle-stack">
+              <label class="toggle-row">
+                <input id="boundsToggle" type="checkbox" checked />
+                <span>Enforce physical bounds</span>
+              </label>
+              <label class="toggle-row">
+                <input id="couplingToggle" type="checkbox" checked />
+                <span>Use saturation-based humidity limits</span>
+              </label>
+              <label class="toggle-row">
+                <input id="driftToggle" type="checkbox" checked />
+                <span>Allow equilibrium baseline drift after injections</span>
+              </label>
+              <p class="constraint-note" id="constraintNote"></p>
+              <div class="physics-panel">
+                <p class="physics-title">Physics Details</p>
+                <div class="physics-grid">
+                  <span>Saturation Vapor Pressure</span><strong id="esValue">-</strong>
+                  <span>Saturation Mixing Ratio</span><strong id="qsValue">-</strong>
+                  <span>RH from Mixing-Ratio Envelope</span><strong id="rhBoundsValue">-</strong>
+                  <span>Active RH Slider Bounds</span><strong id="rhActiveValue">-</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="buttons">
+              <button id="applyInitialBtn" type="button">Apply Initial State</button>
+              <button id="resetBtn" type="button" class="ghost">Reset All</button>
+            </div>
+
+            <div class="meta">
+              <p><strong>Model:</strong> toroidal grid with wrapped edges.</p>
+              <ul>
+                <li>Diffusion spreads disturbances across neighboring cells.</li>
+                <li>Cross-coupling transfers influence between variables.</li>
+                <li>Damping and restoring forces pull toward the baseline state.</li>
+              </ul>
+            </div>
+          </div>
+        </aside>
+
+        <section class="viz card panel-viz">
+          <canvas id="chart" width="1320" height="820"></canvas>
+          <div class="legend" id="legend"></div>
+        </section>
+      </section>
+    </main>
+
+    <script src="app.js"></script>
+  </body>
+</html>
